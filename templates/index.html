@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index_styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">Stock Data Fetcher</h1>
+        <form action="/fetch" method="post">
+            <div class="form-group">
+                <label for="stock_name">Stock Name:</label>
+                <input type="text" id="stock_name" name="stock_name" required>
+            </div>
+            <div class="form-group">
+                <label for="start_date">Start Date (YYYY-MM-DD):</label>
+                <input type="date" id="start_date" name="start_date" required>
+            </div>
+            <div class="form-group">
+                <label for="end_date">End Date (YYYY-MM-DD):</label>
+                <input type="date" id="end_date" name="end_date" required>
+            </div>
+            <div class="form-group">
+                <label for="choice">Select Operation:</label>
+                <select id="choice" name="choice">
+                    <option value="1">Fetching Historical Data</option>
+                    <option value="2">General Information About the Stock</option>
+                    <option value="3">Getting Recent Data (5 days)</option>
+                    <option value="4">Retrieve Data for Multiple Stocks</option>
+                    <option value="5">Show Adjusted Close Prices</option>
+                    <option value="6">Fetch Weekly Data</option>
+                    <option value="7">Access Dividend and Stock Split History</option>
+                    <option value="8">Fetch the Most Up-to-Date Stock Price</option>
+                    <option value="9">Plot Stock Prices</option>
+                    <option value="10">Fetch Data for a Specific Stock</option>
+                    <option value="11">Fetch and Print Data for Multiple Stocks</option>
+                    <option value="12">Plot the Close Prices for Multiple Stocks</option>
+                    <option value="13">RSI (Relative Strength Index)</option>
+                    <option value="14">MACD (Moving Average Convergence Divergence)</option>
+                    <option value="15">Bollinger Bands</option>
+                    <option value="16">Stock Price Forecast Results</option>
+                    <option value="17">Candlestick Chart</option>
+                </select>
+            </div>
+            <input type="submit" value="Submit" class="submit-btn">
+        </form>
+        <h2>Geri Bildirim Formu</h2>
+        <form id="feedback-form" action="/feedback" method="post">
+            <div class="form-group">
+                <label for="name">Adınız:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="surname">Soyadınız:</label>
+                <input type="text" id="surname" name="surname" required>
+            </div>
+            <div class="form-group">
+                <label for="email">E-posta Adresiniz:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="feedback">Geri Bildiriminiz:</label>
+                <textarea id="feedback" name="feedback" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Gönder</button>
+            </div>
+        </form>
+        <div id="message" style="display:none; color: green; text-align: center; margin-top: 10px;">Geri bildiriminiz başarıyla gönderildi</div>
+    </div>
+
+    <script>
+        document.getElementById('feedback-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Formun gönderilmesini engelle
+    
+            const formData = new FormData(this);
+    
+            fetch('/feedback', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.includes('Geri bildiriminiz başarıyla gönderildi')) {
+                    showFeedbackMessage('Geri bildiriminiz başarıyla gönderildi');
+                    this.reset(); // Formu sıfırla
+                } else {
+                    showFeedbackMessage('Bir hata oluştu. Lütfen tekrar deneyin.');
+                }
+            })
+            .catch(() => {
+                showFeedbackMessage('Bir hata oluştu. Lütfen tekrar deneyin.');
+            });
+        });
+    
+        function showFeedbackMessage(message) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+                window.location.reload(); // Sayfayı yenile
+            }, 5000); // Mesajı 5 saniye sonra gizle ve sayfayı yenile
+
+            // Mesajı gösterdikten sonra sayfayı en alta kaydır
+            messageDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
